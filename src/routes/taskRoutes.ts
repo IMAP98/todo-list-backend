@@ -2,8 +2,11 @@ import { Router } from 'express';
 import { body,param } from 'express-validator';
 import { TasksController } from '../controllers/TasksController';
 import { handleInputErrors } from '../middleware/validation';
+import { auth } from '../middleware/auth';
 
 const router = Router();
+
+router.use(auth);
 
 router.post('/', 
     body('name')
@@ -13,14 +16,13 @@ router.post('/',
     body('completed')
         .notEmpty().withMessage('You must specify if the task is completed')
         .isBoolean().withMessage('Completed must be a boolean'),
-    body('idUser')
-        .notEmpty().withMessage('You must specify the user id')
-        .isNumeric().withMessage('Id must be a number'),
     handleInputErrors,
     TasksController.createTask
 );
 
-router.get('/', TasksController.getAllTasks);
+router.get('/', 
+    TasksController.getAllTasks
+);
 
 router.put('/:id', 
     param('id')

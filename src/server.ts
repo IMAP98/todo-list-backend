@@ -12,8 +12,7 @@ const connectDB = async () => {
         db.sync();
         console.log(colors.magenta.bold("Database connected successfully!"));
     } catch (error) {
-        console.log("Oh no!There was an error connecting to the database:", error);
-        
+        console.log("Oh no!There was an error connecting to the database:", error); 
     }
 }
 

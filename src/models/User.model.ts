@@ -5,13 +5,13 @@ import Tasks from './Task.model';
 class User extends Model {
 
     @Column({ type: DataType.STRING(100) })
-    name!: string;
+    declare name: string;
+
+    @Column({ type: DataType.STRING(100), unique: true })
+    declare email: string;
 
     @Column({ type: DataType.STRING(100) })
-    email!: string;
-
-    @Column({ type: DataType.STRING(50) })
-    password!: string;
+    declare password: string;
 
     @HasMany(() => Tasks)
     tasks?: Tasks[];
@@ -19,4 +19,3 @@ class User extends Model {
 }
 
 export default User;
-

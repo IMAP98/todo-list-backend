@@ -5,13 +5,16 @@ import User from './User.model';
 class Tasks extends Model {
 
     @Column({ type: DataType.STRING(100) })
-    name!: string;
+    declare name: string;
+
+    @Column({ type: DataType.BOOLEAN, defaultValue: false })
+    declare completed: boolean;
 
     @ForeignKey(() => User)
-    idUser?: number;
+    declare idUser: number;
 
     @BelongsTo(() => User)
-    user?: User;
+    declare user: User;
 
 }
 

@@ -5,6 +5,7 @@ import db from './config/db';
 import colors from 'colors';
 import cors from 'cors';
 import { corsConfig } from './config/cors';
+import morgan from 'morgan';
 
 const connectDB = async () => {
     try {
@@ -21,6 +22,7 @@ connectDB();
 const server = express();
 
 server.use(cors(corsConfig));
+server.use(morgan('dev'));
 server.use(express.json());
 server.use('/tasks', tasksRoutes);
 server.use('/auth', authRoutes);

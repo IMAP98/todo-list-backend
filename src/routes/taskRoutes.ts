@@ -24,6 +24,14 @@ router.get('/',
     TasksController.getAllTasks
 );
 
+router.get('/:id', 
+    param('id')
+        .notEmpty().withMessage('Id is required')
+        .isNumeric().withMessage('Id must be a number'),
+        handleInputErrors,
+    TasksController.getTaskById
+);
+
 router.put('/:id', 
     param('id')
         .notEmpty().withMessage('Id is required')

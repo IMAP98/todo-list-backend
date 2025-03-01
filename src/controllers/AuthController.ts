@@ -12,7 +12,7 @@ export class AuthController {
             const userExists = await User.findOne({ where: { email } });
 
             if (userExists) {
-                const error = new Error('User already exists');
+                const error = new Error('Este usuario ya existe');
                 res.status(409).json({error: error.message});
                 return;
             }
@@ -22,9 +22,9 @@ export class AuthController {
             user.password = await hashPassword(password);
 
             await User.create({ name, email, password: user.password });
-            res.status(201).send('Task created successfully!');
+            res.status(201).send('¡Cuenta creada exitosamente!');
         } catch (error) {
-            res.status(500).send(`Error creating task: ${error}`);
+            res.status(500).send(`Error creando la tarea: ${error}`);
         }
 
     }
@@ -37,7 +37,7 @@ export class AuthController {
             const user = await User.findOne({ where: { email } });
 
             if (!user) {
-                const error = new Error('User not found');
+                const error = new Error('Usuario no encontrado');
                 res.status(401).json({error: error.message});
                 return;
             }
@@ -45,7 +45,7 @@ export class AuthController {
             const isPasswordCorrect = await checkPassword(password, user.password);
 
             if (!isPasswordCorrect) {
-                const error = new Error('Incorrect password');
+                const error = new Error('Contraseña incorrecta');
                 res.status(401).json({error: error.message});
                 return;
             }
@@ -54,9 +54,13 @@ export class AuthController {
             res.status(200).send(token);
 
         } catch (error) {
-            res.status(500).send(`Error creating task: ${error}`);
+            res.status(500).send(`Error creando la tarea: ${error}`);
         }
         
+    }
+
+    static getUser = async (req: Request, res: Response) => {
+        res.status(200).json(req.user);
     }
     
 }

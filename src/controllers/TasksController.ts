@@ -33,6 +33,20 @@ export class TasksController {
         
     }
 
+    static getTaskById = async (req: Request, res: Response) =>{
+        
+        let {id} = req.body;
+        id = req.params.id;
+
+        try {
+            const tasks = await Tasks.findByPk(id);
+            res.status(200).json(tasks);
+        } catch (error) {
+            res.status(500).send(`Error trying to get all tasks: ${error}`);
+        }
+        
+    }
+
     static updateTask = async (req: Request, res: Response) => {
 
         const { id } = req.params;

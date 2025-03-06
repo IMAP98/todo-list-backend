@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import User from '../models/User.model';
+import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
+import User from "../models/User.model";
 
 declare global {
     namespace Express {
@@ -10,35 +10,43 @@ declare global {
     }
 }
 
-export const auth = async(req: Request, res: Response, next: NextFunction) => {
-    
+export const authMiddleware = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     const bearer = req.headers.authorization;
+    // console.log(bearer);
 
     if (!bearer) {
-        const error = new Error('No token provided');
-        res.status(401).json({ error: error.message });
+        res.status(401).json({
+            message: "No token, authorization denied",
+        });
         return;
     }
 
-    const [, token] = bearer.split(' ');
+    const [, token] = bearer!.split(" ");
+    // console.log(token);
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(
+            token,
+            process.env.JWT_SECRET || "terminallogistics"
+        );
 
-        if(typeof decoded === 'object' && decoded.id) {
+        // console.log(decoded);
 
-            const user = (await User.findByPk(decoded.id)).id;
+        if (typeof decoded === "object" && decoded.users_id) {
+            const user = await User.findByPk(decoded.users_id);
 
-            if(user) {
+            if (user) {
                 req.user = user;
                 next();
             } else {
-                res.status(401).json({ error: 'Invalid token' });
+                res.status(401).json({ error: "Invalid token" });
             }
         }
-
     } catch (error) {
-        res.status(401).json({ error: `Invalid token: ${error.message}` });
+        res.status(401).json({ error: `Invalid token: ${error}` });
     }
-
 };

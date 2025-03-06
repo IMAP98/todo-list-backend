@@ -1,56 +1,54 @@
-import { Router } from 'express';
-import { body,param } from 'express-validator';
-import { TasksController } from '../controllers/TasksController';
-import { handleInputErrors } from '../middleware/validation';
-import { auth } from '../middleware/auth';
+import express, { Request, Response, NextFunction } from "express";
+import { body, param, validationResult } from "express-validator";
+import taskController from "../controllers/TasksController";
+import { authMiddleware } from "../middleware/auth";
 
-const router = Router();
+const router = express.Router();
 
-router.use(auth);
+// Middleware wrapper to handle async route handlers
+const asyncHandler =
+    (fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) =>
+    (req: Request, res: Response, next: NextFunction) => {
+        Promise.resolve(fn(req, res, next)).catch(next);
+    };
 
-router.post('/', 
-    body('name')
-        .notEmpty().withMessage('Name is required')
-        .isString().withMessage('Name must be a string')
-        .isLength({ min: 2 }).withMessage('Name must be at least 2 characters long'),
-    body('completed')
-        .notEmpty().withMessage('You must specify if the task is completed')
-        .isBoolean().withMessage('Completed must be a boolean'),
-    handleInputErrors,
-    TasksController.createTask
+// Apply auth middleware to all routes
+router.use(authMiddleware);
+
+router.post(
+    "/",
+    [
+        body("tasks_name").notEmpty().withMessage("Title is required"),
+        body("tasks_completed").optional(),
+    ],
+    asyncHandler(taskController.createTask)
 );
 
-router.get('/', 
-    TasksController.getAllTasks
+router.get("/", asyncHandler(taskController.getTasks));
+
+router.get(
+    "/:tasks_id",
+    [param("tasks_id").isInt().withMessage("Invalid task ID")],
+    asyncHandler(taskController.getTaskById)
 );
 
-router.get('/:id', 
-    param('id')
-        .notEmpty().withMessage('Id is required')
-        .isNumeric().withMessage('Id must be a number'),
-        handleInputErrors,
-    TasksController.getTaskById
+router.put(
+    "/:tasks_id",
+    [
+        param("tasks_id").isInt().withMessage("Invalid task ID"),
+        body("tasks_name")
+            .optional()
+            .notEmpty()
+            .withMessage("Title cannot be empty"),
+        body("tasks_name").optional(),
+    ],
+    asyncHandler(taskController.updateTask)
 );
 
-router.put('/:id', 
-    param('id')
-        .notEmpty().withMessage('Id is required')
-        .isNumeric().withMessage('Id must be a number'),
-    body('name')
-        .notEmpty().withMessage('Name is required')
-        .isString().withMessage('Name must be a string')
-        .isLength({ min: 2 }).withMessage('Name must be at least 2 characters long'),
-    body('completed')
-        .notEmpty().withMessage('You must specify if the task is completed'),
-        handleInputErrors,
-    TasksController.updateTask
-);
-
-router.delete('/:id', 
-    param('id')
-        .notEmpty().withMessage('Id is required')
-        .isNumeric().withMessage('Id must be a number'),
-    TasksController.deleteTask
+router.delete(
+    "/:tasks_id",
+    [param("tasks_id").isInt().withMessage("Invalid task ID")],
+    asyncHandler(taskController.deleteTask)
 );
 
 export default router;

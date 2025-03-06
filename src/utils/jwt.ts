@@ -1,12 +1,16 @@
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
 type UserPayload = {
     id: number;
-}
+};
 
 export const generateJWT = (payload: UserPayload) => {
-    const token = jwt.sign(payload, process.env.JWT_SECRET,{
-        expiresIn: '30d',
-    });
+    const token = jwt.sign(
+        payload,
+        process.env.JWT_SECRET || "terminallogistics",
+        {
+            expiresIn: "30d",
+        }
+    );
     return token;
 };

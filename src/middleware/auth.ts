@@ -16,7 +16,6 @@ export const authMiddleware = async (
     next: NextFunction
 ) => {
     const bearer = req.headers.authorization;
-    // console.log(bearer);
 
     if (!bearer) {
         res.status(401).json({
@@ -26,7 +25,6 @@ export const authMiddleware = async (
     }
 
     const [, token] = bearer!.split(" ");
-    // console.log(token);
 
     try {
         const decoded = jwt.verify(
@@ -34,10 +32,8 @@ export const authMiddleware = async (
             process.env.JWT_SECRET || "terminallogistics"
         );
 
-        // console.log(decoded);
-
-        if (typeof decoded === "object" && decoded.users_id) {
-            const user = await User.findByPk(decoded.users_id);
+        if (typeof decoded === "object" && decoded.id) {
+            const user = await User.findByPk(decoded.id);
 
             if (user) {
                 req.user = user;

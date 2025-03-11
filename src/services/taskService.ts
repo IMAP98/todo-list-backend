@@ -29,21 +29,13 @@ export class TaskService {
             { where: { tasks_id } }
         );
         return updatedRows;
-
-        // const [updatedRows] = await Task.update(updateData, {
-        //     where: { tasks_id, tasks_users_id },
-        // });
-
-        // console.log(updatedRows);
-
-        // return updatedRows > 0;
     }
 
-    async deleteTask(tasks_id: number, tasks_users_id: number) {
+    async deleteTask(tasks_id: number) {
         const deletedRows = await Task.destroy({
-            where: { tasks_id, tasks_users_id },
+            where: { tasks_id },
         });
-        return deletedRows > 0;
+        return deletedRows;
     }
 }
 

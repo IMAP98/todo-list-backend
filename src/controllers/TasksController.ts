@@ -80,11 +80,7 @@ export class TaskController {
     async deleteTask(req: Request, res: Response) {
         try {
             const { tasks_id } = req.params;
-            const tasks_users_id = req.user?.users_id;
-            const deleted = await taskService.deleteTask(
-                Number(tasks_id),
-                tasks_users_id!
-            );
+            const deleted = await taskService.deleteTask(Number(tasks_id));
 
             if (!deleted) {
                 return res.status(404).json({ message: "Task not found" });

@@ -9,13 +9,6 @@ class User extends Model {
     public users_password!: string;
     public readonly users_createdAt!: Date;
     public readonly users_updatedAt!: Date;
-
-    public async checkPassword(
-        password: string,
-        storedHash: string
-    ): Promise<boolean> {
-        return await bcrypt.compare(password, storedHash);
-    }
 }
 
 User.init(
@@ -41,11 +34,6 @@ User.init(
         users_password: {
             type: DataTypes.STRING(255),
             allowNull: false,
-            set(value: string) {
-                const salt = bcrypt.genSaltSync(10);
-                const hash = bcrypt.hashSync(value, salt);
-                this.setDataValue("users_password", hash);
-            },
         },
     },
     {

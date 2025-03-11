@@ -5,14 +5,12 @@ import { authMiddleware } from "../middleware/auth";
 
 const router = express.Router();
 
-// Middleware wrapper to handle async route handlers
 const asyncHandler =
     (fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) =>
     (req: Request, res: Response, next: NextFunction) => {
         Promise.resolve(fn(req, res, next)).catch(next);
     };
 
-// Apply auth middleware to all routes
 router.use(authMiddleware);
 
 router.post(
